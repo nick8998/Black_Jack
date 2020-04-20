@@ -4,30 +4,40 @@ class ToPlay
     puts "Введите имя игрока: "
     name = gets.chomp
     @player = Player.new(name)
-    @dealer = Dealer.new
-    @bank = 0
+    @dealer = Dealer.new("dealer")
+
   end
 
   def menu
-    @player.cards = []
-    @dealer.cards = []
-    @player.points = 0
-    @dealer.points = 0 
-    @cards = Cards.new
-    @player.cards << @cards.random
-    @dealer.cards << @cards.random
-    @player.cards << @cards.random
-    @dealer.cards << @cards.random
-    @player.points += @cards.points_install(@player.cards)
-    @dealer.points += @cards.points_install(@dealer.cards)
-    @player.budget = budget_change(@player.budget)
-    @dealer.budget = budget_change(@dealer.budget)
+
+    starting_play
 
     show_cards
 
     first_step
     
     final_step
+  end
+
+  def starting_play
+    @player.reset_cards
+    @dealer.reset_cards
+
+    @player.reset_points
+    @dealer.reset_points 
+
+    @cards = Deck.new
+
+    @player.add_card(2,@cards)
+    @dealer.add_card(2,@cards)
+
+    @player.change_points(@cards)
+    @dealer.change_points(@cards)
+
+    @bank = Bank.new
+    @player.bank.bet
+    @dealer.bank.bet
+    @bank.add_money(Bank::BET)
   end
 
   def first_step
@@ -38,12 +48,12 @@ class ToPlay
 
     case next_action
     when 1
-      add_card(@player)
-      dealer_step_1
+      @player.add_card(1, @cards)
+      @dealer.step_1
     when 2
       show_all_cards
     when 3 
-      dealer_step_2
+      @dealer.step_2
     end
   end
 
@@ -54,7 +64,7 @@ class ToPlay
 
     case next_action
     when 1
-      add_card(@player)
+      @player.add_card(1, @cards)
       show_all_cards
     when 2
       show_all_cards
@@ -63,64 +73,21 @@ class ToPlay
 
   def show_cards
     puts "\n#{@player.name}: #{@player.cards} => #{@player.points} \nDealer: *,*"
-    puts "\nОбщий банк: #{@bank}, 
-Деньги игрока: #{@player.budget},
-Деньги дилера: #{@dealer.budget}"
+    puts "\nОбщий банк: #{@bank.money}, 
+Деньги игрока: #{@player.bank.money},
+Деньги дилера: #{@dealer.bank.money}"
   end
 
   def show_all_cards
     puts "#{@player.name}: #{@player.cards} => #{@player.points} 
 Dealer: #{@dealer.cards} => #{@dealer.points}"
-    mount_cash
+    @dealer.mount_cash(@player, @bank)
   end
 
-  def add_card(name)
-    name.cards << @cards.random
-    name.points = @cards.points_install(name.cards)
-  end
+  
 
-  def dealer_step_1
-    if @dealer.points >= 17
-      show_all_cards
-    else
-      add_card(@dealer)
-      show_all_cards  
-    end
-  end
 
-  def dealer_step_2
-    if @dealer.points >= 17
-      next_step
-    else
-      add_card(@dealer)
-      next_step
-    end
-  end
 
-  def budget_change(budget)
-    budget -= 10
-    @bank += 10
-    return budget
-  end
-
-  def mount_cash
-    if @dealer.points < 21
-      if @player.points < @dealer.points
-        puts "\nВыиграл Dealer" 
-        puts "#{@dealer.budget += @bank}"
-      elsif @player.points < 21
-        puts "\nВыиграл #{@player.name}"
-        puts "#{@player.budget += @bank}"
-      else
-        puts "\nВыиграл Dealer" 
-        puts "#{@dealer.budget += @bank}"
-      end
-    else
-      puts "\nНичья!"
-      puts "#{@dealer.budget += 10} #{@player.budget += 10}"    
-    end
-    @bank = 0
-  end
 
   def final_step
     puts "\nВведите 1, если хотите начать заново"

@@ -23,6 +23,7 @@ class Player
   end
 
   def change_points(deck)
+    reset_points
     @points += deck.points_install(@cards)
   end
 

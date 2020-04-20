@@ -9,27 +9,35 @@ class Dealer < Player
 
   def mount_cash(player, bank)
     if points <= 21
-      if player.points < points
+      if player.points > 21
         puts "\nВыиграл Dealer" 
         puts "#{@bank.money += bank.money}"
-      elsif player.points <= 21
-        puts "\nВыиграл #{@player.name}"
-        puts "#{player.bank.money += bank.money}"
       else
-        puts "\nВыиграл Dealer" 
-        puts "#{@bank.money += bank.money}"
+        if points < player.points
+          puts "\nВыиграл #{player.name}"
+          puts "#{player.bank.money += bank.money}"
+        elsif points == player.points
+          puts "\nНичья!"
+          puts "#{@bank.money += 10} #{player.bank.money += 10}"
+        else
+          puts "\nВыиграл Dealer" 
+          puts "#{@bank.money += bank.money}"
+        end
       end
-    elsif points > 21
-      puts "\nВыиграл #{@player.name}"
-      puts "#{player.bank.money += bank.money}"
     else
-      puts "\nНичья!"
-      puts "#{@bank.money += 10} #{player.bank.money += 10}"    
+      if player.points > 21
+        puts "\nНичья!"
+        puts "#{@bank.money += 10} #{player.bank.money += 10}"
+      else
+        puts "\nВыиграл #{player.name}"
+        puts "#{player.bank.money += bank.money}"
+      end
     end
+
   end
   
   def step
-    if points >= 17
+    if points < 17
       true
     else
       false  

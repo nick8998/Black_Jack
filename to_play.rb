@@ -1,11 +1,8 @@
 class ToPlay
 
-  def initialize
-    puts "Введите имя игрока: "
-    name = gets.chomp
-    @player = Player.new(name)
-    @dealer = Dealer.new("dealer")
-
+  def initialize(player, dealer)
+    @player = player
+    @dealer = dealer
   end
 
   def menu
@@ -49,11 +46,21 @@ class ToPlay
     case next_action
     when 1
       @player.add_card(1, @cards)
-      @dealer.step_1
+      if @dealer.step
+        @dealer.add_card(1, @cards)
+      else
+        nil
+      end
+      show_all_cards
     when 2
       show_all_cards
     when 3 
-      @dealer.step_2
+      if @dealer.step
+        @dealer.add_card(1, @cards)
+      else
+        nil
+      end
+      next_step
     end
   end
 
@@ -79,26 +86,19 @@ class ToPlay
   end
 
   def show_all_cards
+    @player.change_points(@cards)
+    @dealer.change_points(@cards)
+
     puts "#{@player.name}: #{@player.cards} => #{@player.points} 
 Dealer: #{@dealer.cards} => #{@dealer.points}"
+
     @dealer.mount_cash(@player, @bank)
   end
-
-  
-
-
-
 
   def final_step
     puts "\nВведите 1, если хотите начать заново"
     puts "Введите 2, если хотите выйти"
-    next_action = gets.chomp.to_i
-    case next_action 
-    when 1
-      menu
-    when 2
-      nil
-    end
+    @next_action = gets.chomp.to_i
   end
 
   private

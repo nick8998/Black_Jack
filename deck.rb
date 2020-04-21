@@ -1,20 +1,20 @@
 class Deck
-
+  attr_accessor :cards
   def initialize
     @cards = []
     Cards::VALUES.each do |value|
       Cards::SUITS.each do |suit|
-        @cards << value+suit
+        @cards << Cards.new(value, suit)
       end
     end
   end
 
- def points_install(cards)
+  def points_install(cards)
     points = 0
-    cards.each do |v|
-      if v[0].to_i <= 9 and v[0].to_i > 1 
-        points += v[0].to_i
-      elsif v[0] == "T"
+    cards.each do |card|
+      if card.card[0].to_i <= 9 and card.card[0].to_i > 1 
+        points += card.card[0].to_i
+      elsif card.card[0] == "T"
         points += 11 if points < 11
         points += 1 if points >= 11
       else
@@ -24,10 +24,8 @@ class Deck
     return points
   end
 
-  def random
-    c = @cards[rand(@cards.size)]
-    @cards.delete(c)
-    return c
+  def shuffled
+    @cards.shuffle!
   end
 
   

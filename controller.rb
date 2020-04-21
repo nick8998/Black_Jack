@@ -15,12 +15,12 @@ class Controller
 
     first_step(@interface.first_step)
 
-    @player.change_points(@deck)
-    @dealer.change_points(@deck)
+    change_points(@player)
+    change_points(@dealer)
     @interface.show_all_cards(@player, @dealer)
     mount_cash
-
-    breaker
+    
+    breaker if @interface.victory?(@player, @dealer)
   end
 
   def breaker
@@ -37,14 +37,18 @@ class Controller
     @player.reset_points
     @dealer.reset_points 
 
+    @player.number_card = 0
+
     @deck.shuffled
+
+    
 
     @player.add_card(2,@deck)
     @dealer.number_card = @player.number_card + 1
     @dealer.add_card(2,@deck)
 
-    @player.change_points(@deck)
-    @dealer.change_points(@deck)
+    change_points(@player)
+    change_points(@dealer)
 
     @bank = Bank.new
     @player.bank.bet
@@ -81,6 +85,12 @@ class Controller
     when 2
       nil
     end
+  end
+
+
+  def change_points(person)
+    person.reset_points
+    Hand.new.points_install(person)
   end
 
   def mount_cash

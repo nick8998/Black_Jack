@@ -31,8 +31,8 @@ class Controller
 
 
   def starting_play
-    @player.reset_cards
-    @dealer.reset_cards
+    @player.hand.reset_cards
+    @dealer.hand.reset_cards
 
     @player.reset_points
     @dealer.reset_points 

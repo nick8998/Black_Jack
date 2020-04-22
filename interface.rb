@@ -22,7 +22,7 @@ class Interface
 
   def show_cards(player, dealer, bank)
     print "\n#{player.name} ваши карты:"
-    player.cards.each { |c| print " #{c.value}#{c.suit} " }
+    player.hand.cards.each { |c| print " #{c.value}#{c.suit} " }
     puts "\nОчки #{player.name}: #{player.points} \nDealer: *,*"
     puts "\nОбщий банк: #{bank.money}, 
 Деньги игрока: #{player.bank.money},
@@ -31,10 +31,10 @@ class Interface
 
   def show_all_cards(player, dealer)
     print "\n#{player.name} ваши карты:"
-    player.cards.each { |c| print " #{c.value}#{c.suit} " }
+    player.hand.cards.each { |c| print " #{c.value}#{c.suit} " }
     puts "\nОчки #{player.name}: #{player.points}\n"
     print "Карты дилера:"
-    dealer.cards.each { |c| print " #{c.value}#{c.suit} " }
+    dealer.hand.cards.each { |c| print " #{c.value}#{c.suit} " }
     puts "\nОчки дилера: #{dealer.points} \n"
   end
 

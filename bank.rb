@@ -15,8 +15,12 @@ class Bank
     @money -= BET
   end
 
-  def add_money(bet)
+  def add_bet(bet)
     @money += bet*2
+  end
+
+  def add_money(money)
+    @money += money
   end
 
 end

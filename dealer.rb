@@ -1,6 +1,6 @@
 class Dealer < Player
 
-  attr_accessor :cards, :points, :bank, :number_card
+  attr_accessor :cards, :bank, :number_card
 
 
   def initialize(name)
@@ -8,7 +8,7 @@ class Dealer < Player
   end
   
   def step
-    if points < 17
+    if @hand.points < 17
       true
     else
       false  

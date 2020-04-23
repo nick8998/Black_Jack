@@ -20,7 +20,7 @@ class Controller
     @interface.show_all_cards(@player, @dealer)
     mount_cash
     
-    breaker if @interface.victory?(@player, @dealer)
+    breaker if victory?
   end
 
   def breaker
@@ -34,8 +34,8 @@ class Controller
     @player.hand.reset_cards
     @dealer.hand.reset_cards
 
-    @player.reset_points
-    @dealer.reset_points 
+    @player.hand.reset_points
+    @dealer.hand.reset_points 
 
     @player.number_card = 0
 
@@ -53,7 +53,7 @@ class Controller
     @bank = Bank.new
     @player.bank.bet
     @dealer.bank.bet
-    @bank.add_money(Bank::BET)
+    @bank.add_bet(Bank::BET)
   end
 
   def first_step(next_action)
@@ -89,36 +89,58 @@ class Controller
 
 
   def change_points(person)
-    person.reset_points
-    Hand.new.points_install(person)
+    person.hand.reset_points
+    person.hand.points_install
   end
 
   def mount_cash
-    if @dealer.points <= 21
-      if @player.points > 21
-        puts "\nВыиграл Dealer" 
-        puts "#{@dealer.bank.money += @bank.money}"
-      else
-        if @dealer.points < @player.points
-          puts "\nВыиграл #{@player.name}"
-          puts "#{@player.bank.money += @bank.money}"
-        elsif @dealer.points == @player.points
-          puts "\nНичья!"
-          puts "#{@dealer.bank.money += 10} #{@player.bank.money += 10}"
-        else
-          puts "\nВыиграл Dealer" 
-          puts "#{@dealer.bank.money += @bank.money}"
-        end
-      end
+    if @dealer.hand.points <= 21
+      points_less_21
     else
-      if @player.points > 21
-        puts "\nНичья!"
-        puts "#{@dealer.bank.money += 10} #{@player.bank.money += 10}"
+      points_more_21
+    end
+  end
+
+  def points_less_21
+    if @player.hand.points > 21
+        @dealer.bank.add_money(@bank.money)
+        @interface.dealer_win(@dealer.bank.money)
+    else
+      if @dealer.hand.points < @player.hand.points
+        @player.bank.add_money(@bank.money)
+        @interface.player_win(@player, @player.bank.money)
+      elsif @dealer.hand.points == @player.hand.points
+        @dealer.bank.add_money((@bank.money/2).to_i)
+        @player.bank.add_money((@bank.money/2).to_i)
+        @interface.draw(@player.bank.money, @dealer.bank.money)
       else
-        puts "\nВыиграл #{@player.name}"
-        puts "#{@player.bank.money += @bank.money}"
+        @dealer.bank.add_money(@bank.money)
+        @interface.dealer_win(@dealer.bank.money)
       end
     end
+  end
+
+  def points_more_21
+    if @player.hand.points > 21
+      @dealer.bank.add_money((@bank.money/2).to_i)
+      @player.bank.add_money((@bank.money/2).to_i)
+      @interface.draw(@player.bank.money, @dealer.bank.money)
+    else
+      @player.bank.add_money(@bank.money)
+      @interface.player_win(@player, @player.bank.money)
+    end
+  end
+
+  def victory?
+    if @player.bank.money <= 0
+      @interface.dealer_full_win
+      false
+    elsif @dealer.bank.money <= 0 
+      @interface.player_full_win(@player)
+      false
+    else
+      true
+    end  
   end
 
   private

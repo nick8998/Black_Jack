@@ -23,7 +23,7 @@ class Interface
   def show_cards(player, dealer, bank)
     print "\n#{player.name} ваши карты:"
     player.hand.cards.each { |c| print " #{c.value}#{c.suit} " }
-    puts "\nОчки #{player.name}: #{player.points} \nDealer: *,*"
+    puts "\nОчки #{player.name}: #{player.hand.points} \nDealer: *,*"
     puts "\nОбщий банк: #{bank.money}, 
 Деньги игрока: #{player.bank.money},
 Деньги дилера: #{dealer.bank.money}"
@@ -32,10 +32,10 @@ class Interface
   def show_all_cards(player, dealer)
     print "\n#{player.name} ваши карты:"
     player.hand.cards.each { |c| print " #{c.value}#{c.suit} " }
-    puts "\nОчки #{player.name}: #{player.points}\n"
+    puts "\nОчки #{player.name}: #{player.hand.points}\n"
     print "Карты дилера:"
     dealer.hand.cards.each { |c| print " #{c.value}#{c.suit} " }
-    puts "\nОчки дилера: #{dealer.points} \n"
+    puts "\nОчки дилера: #{dealer.hand.points} \n"
   end
 
   def final_step
@@ -44,15 +44,26 @@ class Interface
     gets.chomp.to_i
   end
 
-  def victory?(player, dealer)
-    if player.bank.money <= 0
-      puts "Дилер забирает весь банк. Конец игры"
-      false
-    elsif dealer.bank.money <= 0 
-      puts "#{player.name} забирает весь банк. Конец игры"
-      false
-    else
-      true
-    end
+  def dealer_full_win
+    puts "Дилер забирает весь банк. Конец игры"
+  end
+
+  def player_full_win(player)
+    puts "#{player.name} забирает весь банк. Конец игры"
+  end
+
+  def dealer_win(money)
+      puts "\nВыиграл Dealer" 
+      puts "#{money}"
+  end  
+
+  def player_win(player, money)
+    puts "\nВыиграл #{player.name}"
+    puts "#{money}"
+  end
+
+  def draw(p_money, d_money)
+    puts "\nНичья!"
+    puts "Банк игрока: #{p_money} Банк дилера: #{d_money}"
   end
 end

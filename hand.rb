@@ -1,45 +1,62 @@
 class Hand
-  attr_accessor :cards
+  attr_accessor :cards, :points
 
   def initialize
     @cards = []
+    @points = 0
   end
 
-  def points_install(person)
-    cards = person.hand.cards
+  def points_install
     @aces = 0
-    cards.each do |card|
+    @cards.each do |card|
       if card.value.to_i < 10 and card.value.to_i > 1 
-        person.points += card.value.to_i
+        @points += card.value.to_i
       elsif card.value == "A"
-        person.points += 0
+        @points += 0
         @aces += 1
       else
-        person.points += 10
+        @points += 10
       end 
     end
     cards.each do |card|
       if card.value == "A"
         if @aces < 2
-          if person.points < 11
-            person.points += 11
-          else
-            person.points += 1          
-          end
+          aces_less_2
         else
-          if person.points < 10
-            person.points += 11
-          else
-            person.points += 1          
-          end
+          aces_more_2
         end
       else
-        person.points += 0
+        @points += 0
       end
+    end
+  end
+
+  def aces_less_2
+    if @points < 11
+      @points += 11
+    else
+      @points += 1          
+    end
+  end
+
+  def aces_more_2
+    if @points < 10
+      @points += 11
+    else
+      @points += 1          
     end
   end
 
   def reset_cards
     @cards = []
+  end
+
+
+  def reset_points
+    @points = 0
+  end
+
+  def add_cards(card)
+    @cards << card
   end
 end

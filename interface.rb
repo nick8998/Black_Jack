@@ -3,7 +3,6 @@ class Interface
   def get_name
     puts "Введите имя игрока: "
     return name = gets.chomp
-    raise "Имя должно быть больше 4 символов" if name.size < 4
   end
 
 

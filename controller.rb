@@ -3,6 +3,7 @@ class Controller
   def initialize(interface)
     @interface = interface
     @name = @interface.get_name
+    raise "Имя должно быть больше 4 символов" if @name.size < 4
     @player = Player.new(@name)
     @dealer = Dealer.new("dealer")
   end
